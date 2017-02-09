@@ -523,7 +523,7 @@
                 self = this,
                 retVal;
 
-            retVal = this._options.showConfirm(confirmMessage);
+            retVal = this._options.showConfirm(confirmMessage, id, uuid);
 
             if (qq.isGenericPromise(retVal)) {
                 retVal.then(function() {

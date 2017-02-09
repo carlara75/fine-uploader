@@ -248,7 +248,7 @@ as you see fit.  This is possible by overriding the `showMessage` function optio
 simply invokes `alert` with the message text.  One instance in which this is used is when the user attempts to select an
 invalid file for upload.  There are general message types with default text that can be overriden as well.
 
-* `showConfirm: function(message) {...}` - This function is used to display a confirm dialog.  One
+* `showConfirm: function(message, id, uuid) {...}` - This function is used to display a confirm dialog.  One
 such feature that optionally uses this is the `deleteFile` feature. Note that **this
 is a promissory callback**, meaning it requires a [promise](async-tasks-and-promises.html) to
 be returned.The default implementation uses `window.confirm`, but you
