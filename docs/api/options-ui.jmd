@@ -42,7 +42,7 @@ can be overridden.
 
 {{ api_option("showMessage", "showMessage", "Provide a function here to display a message to the user when the uploader receives an error or the user attempts to leave the page. The provided function may return a promise if one wishes to do asynchronous work whilst waiting for user input.", "Function", "function(message) { window.alert(message); }") }}
 
-{{ api_option("showConfirm", "showConfirm", "Provide a function here to prompt the user to confirm deletion of a file. The provided function may return a promise if one wishes to do asynchronous work whilst waiting for user input.", "Function", "function(message, id, uuid) { window.confirm(message); }") }}
+{{ api_option("showConfirm", "showConfirm", "Provide a function here to prompt the user to confirm deletion of a file. The provided function may return a promise if one wishes to do asynchronous work whilst waiting for user input.", "Function", "function(message, id) { window.confirm(message); }") }}
 
 {{ api_option("showPrompt", "showPrompt", "Provide a function here to prompt the user for a filename when pasting file(s). The provided function may return a promise if one wishes to do asynchronous work whilst waiting for user input.", "Function", "function(message, defaultValue) { window.prompt(message, defaultValue); }") }}
 
