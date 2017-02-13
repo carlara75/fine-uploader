@@ -713,7 +713,7 @@
             this._addToList(id, this.getName(id), true);
             this._templating.hideSpinner(id);
             this._templating.hideCancel(id);
-            if (sessionData.status == qq.status.UPLOAD_SUCCESSFUL) {
+            if (sessionData.status === qq.status.UPLOAD_SUCCESSFUL) {
                 this._markFileAsSuccessful(id);
             } else {
                 this._preventRetries[id] = true;
