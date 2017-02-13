@@ -373,14 +373,7 @@
                     self._markFileAsSuccessful(id);
                 }
                 else {
-                    qq(fileContainer).addClass(self._classes.fail);
-                    templating.showCancel(id);
-
-                    if (templating.isRetryPossible() && !self._preventRetries[id]) {
-                        qq(fileContainer).addClass(self._classes.retryable);
-                        templating.showRetry(id);
-                    }
-                    self._controlFailureTextDisplay(id, result);
+                    self._markFileAsFailed(id, result);
                 }
             }
 
@@ -408,6 +401,20 @@
             qq(templating.getFileContainer(id)).addClass(this._classes.success);
 
             this._maybeUpdateThumbnail(id);
+        },
+
+        _markFileAsFailed: function(id, result) {
+            var templating = this._templating,
+                fileContainer = templating.getFileContainer(id);
+
+            qq(fileContainer).addClass(this._classes.fail);
+            templating.showCancel(id);
+
+            if (templating.isRetryPossible() && !this._preventRetries[id]) {
+                qq(fileContainer).addClass(this._classes.retryable);
+                templating.showRetry(id);
+            }
+            this._controlFailureTextDisplay(id, result);
         },
 
         _onUploadPrep: function(id) {
@@ -706,7 +713,12 @@
             this._addToList(id, this.getName(id), true);
             this._templating.hideSpinner(id);
             this._templating.hideCancel(id);
-            this._markFileAsSuccessful(id);
+            if (sessionData.status == qq.status.UPLOAD_SUCCESSFUL) {
+                this._markFileAsSuccessful(id);
+            } else {
+                this._preventRetries[id] = true;
+                this._markFileAsFailed(id, sessionData);
+            }
 
             return id;
         },

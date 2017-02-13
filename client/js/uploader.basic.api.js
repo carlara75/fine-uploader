@@ -446,7 +446,7 @@
                 uuid: sessionData.uuid,
                 name: sessionData.name,
                 size: sessionData.size,
-                status: qq.status.UPLOAD_SUCCESSFUL
+                status: sessionData.status || qq.status.UPLOAD_SUCCESSFUL
             });
 
             sessionData.deleteFileEndpoint && this.setDeleteFileEndpoint(sessionData.deleteFileEndpoint, id);
