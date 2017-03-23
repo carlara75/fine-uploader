@@ -1606,7 +1606,7 @@ declare namespace FineUploader {
      * function for `showConfirm` option
      */
     interface ShowConfirmFunction {
-        (message: string): PromiseOptions | void;
+        (message: string, id: number): PromiseOptions | void;
     }
 
     /**
@@ -1926,7 +1926,7 @@ declare namespace FineUploader {
          * 
          * The provided function may return a promise if one wishes to do asynchronous work whilst waiting for user input
          * 
-         * @default `function(message) { window.confirm(message); }`
+         * @default `function(message, id) { window.confirm(message); }`
          */
         showConfirm?: ShowConfirmFunction;
         /**
