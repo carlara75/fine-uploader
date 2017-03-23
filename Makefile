@@ -4,7 +4,14 @@ version=$(shell node -pe "require('./package.json').version")
 dist-out-dir = _dist
 pub-dir = $(dist-out-dir)/$(version)
 
-npm-bin = $(shell npm bin)
+
+# properly get npm-bin in cygwin (Eg. CYGWIN_NT-10.0)
+platform = $(shell uname -s)
+ifeq ($(findstring _NT,$(platform)),_NT)
+	npm-bin = $(shell cygpath -u $(shell npm bin))
+else
+	npm-bin = $(shell npm bin)
+endif
 
 build-out-dir = _build
 src-dir = client
@@ -357,6 +364,7 @@ setup-dist:
 	mkdir -p $(pub-dir)
 	cp LICENSE README.md package.json $(pub-dir)
 	cp -pR $(src-dir)/commonjs/ $(pub-dir)/lib/
+	cp -pR $(src-dir)/typescript $(pub-dir)/
 
 copy-build-to-dist:
 	mkdir -p $(pub-dir)/$(PUB-SUBDIR)
@@ -395,6 +403,42 @@ copy-azure-jquery-dist:
 
 copy-all-dist:
 	make copy-build-to-dist PUB-SUBDIR=all.fine-uploader
+
+docs: install-docfu
+	git config --global user.email "fineuploader-docs-bot@raynicholus.com"
+	git config --global user.name "fineuploader-docs-bot"
+	docfu --$(type) "$(type-value)" "FineUploader/fine-uploader" "docfu-temp"
+	git clone --depth 1 https://github.com/FineUploader/docs.fineuploader.com.git
+	cp -pR docfu-temp/$(type) docs.fineuploader.com/
+	make maybe-update-root-docs
+	(cd docs.fineuploader.com ; git add .)
+	(cd docs.fineuploader.com ; git diff --cached --quiet || git commit -a -m "update docs for $(type) $(type-value)")
+	@(cd docs.fineuploader.com ; git push https://$(DOCS_PUSH_ACCESS_TOKEN)@$(DOCS_GH_REF))
+.PHONY: docs
+
+maybe-update-root-docs:
+ifndef TRAVIS_TAG
+ifeq ($(TRAVIS_BRANCH), master)
+	cp -pR docs.fineuploader.com/branch/master/. docs.fineuploader.com/
+endif
+endif
+.PHONY: maybe-update-root-docs
+
+docs-travis:
+ifneq ($(TRAVIS_PULL_REQUEST), false)
+	@echo skipping docs build - not a non-PR or tag push
+else ifdef TRAVIS_TAG
+	make docs type=tag type-value=$(TRAVIS_TAG)
+else
+	make docs type=branch type-value=$(TRAVIS_BRANCH)
+endif
+.PHONY: docs-travis
+
+install-docfu:
+	git clone --depth 1 -b 1.0.2 https://github.com/FineUploader/docfu
+	(cd docfu ; python setup.py install)
+	rm -rf docfu
+.PHONY: install-docfu
 
 tag-release:
 ifeq ($(simulate), true)
