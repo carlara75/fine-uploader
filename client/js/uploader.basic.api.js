@@ -456,8 +456,10 @@
                 this._thumbnailUrls[id] = sessionData.thumbnailUrl;
             }
 
-            this._netUploaded++;
-            this._netUploadedOrQueued++;
+            if (sessionData.status !== qq.status.UPLOAD_FAILED) {
+                this._netUploaded++;
+                this._netUploadedOrQueued++;
+            }
 
             return id;
         },

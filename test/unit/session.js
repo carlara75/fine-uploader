@@ -52,6 +52,49 @@ describe("file list initialization tests", function() {
         assert.equal(uploader.getRemainingAllowedItems(), 3, "wrong number of remaining allowed items");
     });
 
+    it("adds SUCCESSFUL and FAILED items to the initial file list via API", function() {
+        var uploader = new qq.FineUploaderBasic({
+            validation: {
+                itemLimit: 5
+            }
+        });
+
+        uploader.addInitialFiles([
+            {
+                name: "failed.jpg",
+                uuid: "123",
+                size: 456,
+                status: qq.status.UPLOAD_FAILED
+            },
+            {
+                name: "successful.jpg",
+                uuid: "abc",
+                status: qq.status.UPLOAD_SUCCESSFUL
+            }
+        ]);
+
+        assert.equal(uploader.getUploads().length, 2, "wrong number of pre-populated uploads recorded");
+        assert.equal(uploader.getUploads({status: qq.status.UPLOAD_FAILED}).length, 1, "did not find failed upload");
+        assert.equal(uploader.getUploads({status: qq.status.UPLOAD_SUCCESSFUL}).length, 1, "did not find successful upload");
+
+        assert.equal(uploader.getUuid(0), "123", "123 UUID was not recorded");
+        assert.equal(uploader.getUuid(1), "abc", "abc UUID was not recorded");
+
+        assert.equal(uploader.getSize(0), 456, "wrong size for first file");
+        assert.equal(uploader.getSize(1), -1, "wrong size for second file");
+
+        assert.equal(uploader.getName(0), "failed.jpg", "wrong name for first file");
+        assert.equal(uploader.getName(1), "successful.jpg", "wrong name for second file");
+
+        assert.equal(uploader.getFile(0), null, "unexpected return value for getFile");
+        assert.equal(uploader.getFile(1), null, "unexpected return value for getFile");
+
+        assert.equal(uploader.getInProgress(), 0, "unexpected getInProgress value");
+        assert.equal(uploader.getNetUploads(), 1, "unexpected getNetUploads value");
+
+        assert.equal(uploader.getRemainingAllowedItems(), 4, "wrong number of remaining allowed items");
+    });
+
     it("adds valid items to the initial file list via GET request", function(done) {
         var expectedSessionResponse = [
                 {
